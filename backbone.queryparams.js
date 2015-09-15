@@ -240,12 +240,22 @@ _.extend(Backbone.Router.prototype, {
  */
 function toQueryString(val, namePrefix) {
   /*jshint eqnull:true */
-  var splitChar = Backbone.Router.arrayValueSplit;
+  var splitChar = Backbone.Router.arrayValueSplit,
+    fullyEncodeValue;
+
   function encodeSplit(val) { return String(val).replace(splitChar, encodeURIComponent(splitChar)); }
 
   if (!val) {
     return '';
   }
+
+  fullyEncodeValue = function(val) {
+    return encodeURIComponent(val)
+      .replace(/'/, '%27')
+      .replace(/\(/, '%28')
+      .replace(/\)/, '%29')
+      .replace(/\*/, '%2A');
+  };
 
   namePrefix = namePrefix || '';
   var rtn = [];
@@ -255,7 +265,7 @@ function toQueryString(val, namePrefix) {
     if (_.isString(_val) || _.isNumber(_val) || _.isBoolean(_val) || _.isDate(_val)) {
       // primitive type
       if (_val != null) {
-        rtn.push(name + '=' + encodeSplit(encodeURIComponent(_val)));
+        rtn.push(name + '=' + encodeSplit(fullyEncodeValue(_val)));
       }
     } else if (_.isArray(_val)) {
       // arrays use Backbone.Router.arrayValueSplit separator
@@ -263,7 +273,7 @@ function toQueryString(val, namePrefix) {
       for (var i = 0; i < _val.length; i++) {
         var param = _val[i];
         if (param != null) {
-          str += splitChar + encodeSplit(encodeURIComponent(param));
+          str += splitChar + encodeSplit(fullyEncodeValue(param));
         }
       }
       if (str) {
