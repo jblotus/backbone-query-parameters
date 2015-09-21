@@ -251,10 +251,10 @@ function toQueryString(val, namePrefix) {
 
   fullyEncodeValue = function(val) {
     return encodeURIComponent(val)
-      .replace(/'/, '%27')
-      .replace(/\(/, '%28')
-      .replace(/\)/, '%29')
-      .replace(/\*/, '%2A');
+      .replace(/'/g, '%27')
+      .replace(/\(/g, '%28')
+      .replace(/\)/g, '%29')
+      .replace(/\*/g, '%2A');
   };
 
   namePrefix = namePrefix || '';
